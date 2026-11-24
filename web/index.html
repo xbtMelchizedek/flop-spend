@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>flop-spend: settled Flop inference spend per address</title>
+<meta name="description" content="Has this address spent on Flop inference yet? Settled inference spend per address from the Flop explorer, re-read on chain. Measures spend only; no airdrop estimates.">
+<script>document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="arc/foundation.css">
+<link rel="stylesheet" href="arc/badge.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>flop-spend</h1>
+    <p class="lede">Settled inference spend per address on Flop, read from the explorer and re-read on chain before it is shown. It answers one question: has this address spent on inference yet?</p>
+    <p class="muted"><a href="https://github.com/xbtMelchizedek/flop-spend">GitHub</a> · <a href="data/spend.json">spend.json</a> · <a href="data/epoch.json">epoch.json</a> (Merkle root over the same settlements, checkable with <a href="https://github.com/xbtMelchizedek/flop-receipt-root">flop-receipt-root</a>) · Rebuilt every 2 hours.</p>
+  </header>
+
+  <section class="panel" id="mode" role="status"></section>
+
+  <section class="panel">
+    <h2>Look up an address</h2>
+    <label>SS58 address <input id="q" placeholder="5F…" autocomplete="off" spellcheck="false"></label>
+    <div id="hit" class="hit"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Spend by address</h2>
+    <div id="meta" class="muted"></div>
+    <div class="wrap"><table id="tbl"></table></div>
+  </section>
+
+  <section class="panel">
+    <h2>What is measured, and what isn't</h2>
+    <p id="measured"></p>
+    <p>This page does not estimate airdrops, eligibility or rewards. Flop's own docs say:</p>
+    <div id="docs"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Ask from a terminal or an agent</h2>
+    <pre>npx -y github:xbtMelchizedek/flop-spend has-spent 5GsXb3TmNGixuEsbtixqHnqWr9UQJ2M8bkqBQWteNekgF98S</pre>
+    <p class="muted">Reads the address's whole settlement history (not just this page's window), re-reads the newest three on chain, and exits 0 for yes, 1 for no, 2 for an error or a chain disagreement. As an MCP server with <code>flop_has_spent</code> and <code>flop_spend_status</code>:</p>
+    <pre>{ "mcpServers": { "flop-spend": { "command": "npx", "args": ["-y", "github:xbtMelchizedek/flop-spend", "mcp"] } } }</pre>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
