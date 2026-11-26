@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 (2026-11-26)
+
+- Measures live FLOP Testnet. `flop-receipt-root` is now `v0.3.2`, which reads the testnet explorer finalized head from `/api/stats` and `/api/blocks/<n>` when `/api/health` is HTTP 404 (still the case on `testnet.flopscan.io`), and pins genesis plus the block hash on `https://testnet.flop.network`. `flop-spend status` and `has-spent --network auto` therefore switch to testnet once settlements exist, instead of staying on devnet because of the 404.
+- Live check 8:49 AM ET 26 Nov 2026: 31 finalized `computeChannel.Settled` rows on `flop_testnet` (blocks 154678–169626) re-read on chain; Merkle root `0x5557f737…6400` through flop-receipt-root.
+
 ## 0.1.0 (2026-11-24)
 
 First release.

@@ -1,6 +1,6 @@
 {
   "name": "flop-spend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Has this address spent on Flop inference yet? Settled inference spend per address from the Flop explorer, re-read on chain with flop-receipt-root, as a CLI, an MCP tool and a Pages dashboard. Measures spend only; no airdrop estimates.",
   "keywords": ["flop", "substrate", "inference", "agents", "spend", "testnet", "mcp", "explorer", "verification"],
   "homepage": "https://xbtmelchizedek.github.io/flop-spend/",
@@ -19,5 +19,5 @@
     "record": "node scripts/record-fixtures.mjs",
     "prepublishOnly": "npm test"
   },
-  "dependencies": { "flop-receipt-root": "github:xbtMelchizedek/flop-receipt-root#v0.3.0" }
+  "dependencies": { "flop-receipt-root": "github:xbtMelchizedek/flop-receipt-root#v0.3.2" }
 }

@@ -38,10 +38,10 @@ Read those pages yourself. They change, and this tool only quotes them.
 
 ## Testnet and devnet
 
-Testnet is used **as soon as it has settlements**. Until then, every answer and the dashboard say they are on devnet, and why. As of 2026-11-24 the testnet explorer answers `/api/health` with 404 and `/api/models` with 503 ("Era-T reader unavailable"). `flop-spend status` shows:
+Testnet is used **as soon as it has settlements**. Until then, every answer and the dashboard say they are on devnet, and why. `testnet.flopscan.io/api/health` is still HTTP 404, but from 0.1.1 (via [flop-receipt-root v0.3.2](https://github.com/xbtMelchizedek/flop-receipt-root/releases/tag/v0.3.2)) the finalized head is read from `/api/stats` and `/api/blocks/<n>` and checked against the official Testnet RPC genesis pin. `flop-spend status` shows:
 
-- the testnet explorer's health and settlement count, read directly; and
-- the stage of [justweight](https://github.com/xbtMelchizedek/justweight)'s testnet watcher (`explorer-down` → `no-models` → … → `filled`), from its published snapshot, so both tools agree on when testnet is live.
+- the testnet explorer's finalized head and settlement count, read directly; and
+- the stage of [justweight](https://github.com/xbtMelchizedek/justweight)'s testnet watcher, from its published snapshot, as a second signal.
 
 When the explorer is down, `has-spent` exits 2 with the explorer's own error. The dashboard republishes its last good build marked stale, or shows an empty state with the reason. It never shows numbers it couldn't check.
 

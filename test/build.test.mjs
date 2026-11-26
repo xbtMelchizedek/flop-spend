@@ -17,7 +17,7 @@ const now = () => new Date('2026-11-24T21:10:00Z');
 test('build on recorded devnet: totals, window and root match the recording; every leaf cross-checked', async () => {
   const { data, epoch } = await buildData({ lastBlocks, fetchImpl: replayFetch(), chainFor: replayChain(), now });
   assert.equal(data.network, 'devnet');
-  assert.match(data.status.reason, /testnet explorer \(https:\/\/testnet\.flopscan\.io\): .*404/);
+  assert.match(data.status.reason, /testnet explorer \(https:\/\/testnet\.flopscan\.io\): /);
   assert.equal(data.status.testnet.watch.stage, 'explorer-down');
   assert.deepEqual(data.totals, fx.expect.totals);
   assert.deepEqual(data.window, fx.expect.window);
@@ -58,6 +58,30 @@ test('status: testnet 503, testnet up with 0 settlements, testnet with settlemen
   const some = { status: 200, body: JSON.stringify({ data: [{}], pagination: { total: 4, limit: 1, offset: 0, hasMore: true } }) };
   const s4 = await networkStatus({ fetchImpl: replayFetch({ [TH]: health, 'testnet.flopscan.io/api/settlement-prices': some }) });
   assert.equal(s4.pick, 'testnet');
+  const finHash = '0x' + 'ab'.repeat(32);
+  const g = '0x918abd58fb16306b30ef3886514cfaebffecb4de43e82b6f8ec4795c43cfd800';
+  const rpc = async (url, init = {}) => {
+    if (String(url).includes('testnet.flop.network') && init.method === 'POST') {
+      const method = JSON.parse(init.body).method;
+      const params = JSON.parse(init.body).params;
+      const result = method === 'chain_getBlockHash'
+        ? (params[0] === 0 ? g : params[0] === 1000 ? finHash : '0x' + '00'.repeat(32))
+        : method === 'chain_getFinalizedHead' ? '0x' + 'ee'.repeat(32)
+        : method === 'chain_getHeader' ? { number: '0x3e8' }
+        : null;
+      return new Response(JSON.stringify({ jsonrpc: '2.0', id: 1, result }), { status: 200 });
+    }
+    return replayFetch({
+      [TH]: { status: 404, body: '' },
+      'testnet.flopscan.io/api/stats': { status: 200, body: JSON.stringify({ finality: { finalizedBlock: 1000 }, protocolAccounts: { finalizedBlock: 1000, finalizedHash: finHash } }) },
+      'testnet.flopscan.io/api/blocks/1000': { status: 200, body: JSON.stringify({ number: 1000, hash: finHash }) },
+      'testnet.flopscan.io/api/settlement-prices': some,
+    })(url, init);
+  };
+  const s404 = await networkStatus({ fetchImpl: rpc });
+  assert.equal(s404.pick, 'testnet');
+  assert.equal(s404.testnet.explorer.finalized, 1000);
+  assert.equal(s404.testnet.settlements, 4);
   const noSnap = await networkStatus({ fetchImpl: replayFetch({ [SNAP]: { status: 500, body: '' } }) });
   assert.match(noSnap.testnet.watch.detail, /unreadable/);
 });

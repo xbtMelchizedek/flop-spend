@@ -53,7 +53,7 @@ test('CLI exit codes: 0 yes, 1 no, 2 bad address, 2 testnet forced while its exp
   assert.equal(await main(['has-spent', 'nope'], o), 2);
   assert.match(out, /SS58/);
   assert.equal(await main(['has-spent', fx.spender, '--network', 'testnet'], o), 2);
-  assert.match(out, /testnet\.flopscan\.io.*404/);
+  assert.match(out, /testnet\.flopscan\.io.*(\/api\/stats|404)/);
   assert.equal(await main(['has-spent', fx.spender, '--max-rows', '100', '--json'], o), 0);
   assert.equal(JSON.parse(out).verified, true);
 });
